@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 4.3.1, 2017-11-02T11:19:01. -->
+<!-- Written by QtCreator 4.3.1, 2017-11-08T11:38:28. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -452,6 +452,7 @@
     </valuelist>
     <value type="QString" key="CMakeProjectManager.CMakeRunConfiguation.Title">Serial</value>
     <value type="QString" key="CMakeProjectManager.CMakeRunConfiguration.Arguments"></value>
+    <value type="bool" key="CMakeProjectManager.CMakeRunConfiguration.UseTerminal">true</value>
     <value type="QString" key="CMakeProjectManager.CMakeRunConfiguration.UserWorkingDirectory"></value>
     <value type="QString" key="CMakeProjectManager.CMakeRunConfiguration.UserWorkingDirectory.default">/home/nha/Work/build-SerialPort-Desktop-Default</value>
     <value type="int" key="PE.EnvironmentAspect.Base">2</value>
