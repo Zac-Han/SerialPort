@@ -75,3 +75,17 @@ int MySerialPort::readLengthByte(unsigned char &nextByte)
         break;
     }
 }
+
+void MySerialPort::SendMsg(unsigned char *buffer, int length)
+{
+    int i = 0;
+    std::cout << "Sending following "
+              << length
+              << " bytes to /dev/ttyUSB0: "
+              << buffer << std::endl;
+    while(i < length)
+    {
+        MySerialPort::put(buffer[i]);
+        i++;
+    }
+}

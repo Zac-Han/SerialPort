@@ -45,6 +45,10 @@ public:
      */
     int readLengthByte(unsigned char &nextByte);
 
+    /* Send message to the port
+     */
+    void SendMsg(unsigned char* buffer, int length);
+
 };
 
 #endif // MYSERIALPORT_H
