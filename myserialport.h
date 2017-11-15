@@ -11,6 +11,13 @@ class MySerialPort : public SerialStream
 public:
     MySerialPort();
 
+    /* Start bytes
+     */
+    const unsigned char START_BYTE_1 = 0x10;
+    const unsigned char START_BYTE_2 = 0xAF;
+
+
+
     /* Initialization of the serial port with default paremeters:
      * Baudrate:    115200
      * Char_Size:   8
@@ -28,6 +35,16 @@ public:
                   SerialStreamBuf::ParityEnum parityType,
                   SerialStreamBuf::FlowControlEnum flowControlType,
                   short Stopbit);
+
+    /* Read next byte from the serial port
+     */
+    void readByte(unsigned char &nextByte);
+
+    /* After finding the start bytes read the next byte,
+     * which indicate the length of the valid message
+     */
+    int readLengthByte(unsigned char &nextByte);
+
 };
 
 #endif // MYSERIALPORT_H
