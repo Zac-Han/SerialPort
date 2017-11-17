@@ -2,6 +2,7 @@
 #define MYSERIALPORT_H
 #include <fstream>
 #include <cstdlib>
+#include <string.h>
 #include <SerialStream.h>
 
 using namespace LibSerial;
@@ -40,14 +41,20 @@ public:
      */
     void readByte(unsigned char &nextByte);
 
-    /* After finding the start bytes read the next byte,
-     * which indicate the length of the valid message
-     */
-    int readLengthByte(unsigned char &nextByte);
+//    /* After finding the start bytes read the next byte,
+//     * which indicate the length of the valid message,
+//     * and then return it
+//     * ???What kind of value will be received here???
+//     */
+//    int readLengthByte(unsigned char &nextByte);
 
     /* Send message to the port
      */
-    void SendMsg(unsigned char* buffer, int length);
+    void sendMsg(unsigned char* buffer, int length);
+
+    /* Read message from the port
+     */
+    void readMsg();
 
 };
 
