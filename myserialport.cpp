@@ -1,5 +1,6 @@
 #include "myserialport.h"
 #include <iostream>
+#include <vector>
 
 MySerialPort::MySerialPort()
 {
@@ -18,12 +19,13 @@ void MySerialPort::initDefault()
 
 }
 
-void MySerialPort::initPort(SerialStreamBuf::BaudRateEnum baudRate,
-              SerialStreamBuf::CharSizeEnum charSize,
-              SerialStreamBuf::ParityEnum parityType,
-              SerialStreamBuf::FlowControlEnum flowControlType,
-              short Stopbit)
+void MySerialPort::initPort(const std::string fileName, const SerialStreamBuf::BaudRateEnum baudRate,
+              const SerialStreamBuf::CharSizeEnum charSize,
+              const SerialStreamBuf::ParityEnum parityType,
+              const SerialStreamBuf::FlowControlEnum flowControlType,
+              const short Stopbit)
 {
+    MySerialPort::Open(fileName);
     MySerialPort::SetBaudRate(baudRate);
     MySerialPort::SetCharSize(charSize);
     MySerialPort::SetParity(parityType);
@@ -38,43 +40,6 @@ void MySerialPort::readByte(unsigned char &nextByte)
 {
     MySerialPort::read(reinterpret_cast<char*>(&nextByte), 1);
 }
-
-//int MySerialPort::readLengthByte(unsigned char &nextByte)
-//{
-//    switch (nextByte) {
-//    case 0x31:
-//        return 1;
-//        break;
-//    case 0x32:
-//        return 2;
-//        break;
-//    case 0x33:
-//        return 3;
-//        break;
-//    case 0x34:
-//        return 4;
-//        break;
-//    case 0x35:
-//        return 5;
-//        break;
-//    case 0x36:
-//        return 6;
-//        break;
-//    case 0x37:
-//        return 7;
-//        break;
-//    case 0x38:
-//        return 8;
-//        break;
-//    case 0x39:
-//        return 9;
-//        break;
-//    default:
-//        std::cerr << "Length byte not correct! No valid message found!" << std::endl;
-//        return 0;
-//        break;
-//    }
-//}
 
 void MySerialPort::sendMsg(unsigned char *buffer, int length)
 {
@@ -93,32 +58,46 @@ void MySerialPort::sendMsg(unsigned char *buffer, int length)
 void MySerialPort::readMsg()
 {
     unsigned char nextByte;
-    unsigned char ReadBuffer[256] = {0x00};
-    unsigned char MsgBuffer[] = {0};
-    std::cout << "Receiving bytes from /dev/ttyUSB1: " << ReadBuffer << std::endl;
+    std::vector<unsigned char> ReadBuffer;
+    std::vector<unsigned char> MsgBuffer;
+    std::cout << "Receiving bytes from /dev/ttyUSB1: " << std::endl;
+    for(std::vector<unsigned char>::iterator iter = ReadBuffer.begin(); iter != ReadBuffer.end(); iter++)
+    {
+        std::cout << *iter;
+    }
+    std::cout << std::endl;
     int index = 0;
     while(1)
     {
         MySerialPort::readByte(nextByte);
         std::cout << "**************************received 1 byte**********************"
                   << std::endl;
-        ReadBuffer[index++] = nextByte;
+        ReadBuffer.push_back(nextByte);
+        index++;
         if (nextByte == START_BYTE_1)
         {
             MySerialPort::readByte(nextByte);
             std::cout << "**************************received 1 byte**********************"
                       << std::endl;
-            ReadBuffer[index++] = nextByte;
+            ReadBuffer.push_back(nextByte);
+            index++;
 
             if (nextByte == START_BYTE_2)
             {
                 std::cout << "Read buffer after finding start bytes: "
-                          << ReadBuffer << std::endl;
+                          << std::endl;
+                for(std::vector<unsigned char>::iterator iter = ReadBuffer.begin(); iter != ReadBuffer.end(); iter++)
+                {
+                    std::cout << *iter;
+                }
+                std::cout << std::endl;
+
 
                 MySerialPort::readByte(nextByte);
                 std::cout << "**************************received 1 byte**********************"
                           << std::endl;
-                ReadBuffer[index++] = nextByte;
+                ReadBuffer.push_back(nextByte);
+                index++;
                 int startIndex = index - 3;
                 int length = nextByte;
                 //sp.read(reinterpret_cast<char*>(buffer), length);
@@ -127,21 +106,38 @@ void MySerialPort::readMsg()
                     MySerialPort::readByte(nextByte);
                     std::cout << "**************************received 1 byte**********************"
                               << std::endl;
-                    ReadBuffer[index++] = nextByte;
+                    ReadBuffer.push_back(nextByte);
+                    index++;
                 }
                 std::cout << "Read buffer after reading length of the message (plus 1 CRC byte): "
-                          << ReadBuffer << std::endl;
-
-                std::fill(MsgBuffer, MsgBuffer+sizeof(MsgBuffer), 0x00);
-
-                memcpy(MsgBuffer, ReadBuffer+startIndex, startIndex+3+length);
-                std::cout << "valid message buffer: "
-                          << MsgBuffer
                           << std::endl;
+                for(std::vector<unsigned char>::iterator iter = ReadBuffer.begin(); iter != ReadBuffer.end(); iter++)
+                {
+                    std::cout << *iter;
+                }
+                std::cout << std::endl;
+
+                //MsgBuffer.clear();
+
+                //MsgBuffer.assign(ReadBuffer.begin()+startIndex, ReadBuffer.end());
+                MsgBuffer.insert(MsgBuffer.end(), ReadBuffer.begin()+startIndex, ReadBuffer.end());
+
+                std::cout << "valid message buffer: "
+                          << std::endl;
+                for(std::vector<unsigned char>::iterator iter = MsgBuffer.begin(); iter != MsgBuffer.end(); iter++)
+                {
+                    std::cout << *iter;
+                }
+                std::cout << std::endl;
 
                 index = 0;
-                std::fill(ReadBuffer, ReadBuffer+sizeof(ReadBuffer), 0x00);
-                std::cout << "Read buffer after reset: " << ReadBuffer << std::endl;
+                ReadBuffer.clear();
+                std::cout << "Read buffer after reset: " << std::endl;
+                for(std::vector<unsigned char>::iterator iter = ReadBuffer.begin(); iter != ReadBuffer.end(); iter++)
+                {
+                    std::cout << *iter;
+                }
+                std::cout << std::endl;
             }
         }
     }
