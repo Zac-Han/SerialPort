@@ -78,11 +78,20 @@ public:
                   const SerialStreamBuf::FlowControlEnum flowControlType,
                   const short Stopbit);
 
-    void readByte(unsigned char &nextByte);
+    void readByte();
 
     void sendMsg(unsigned char* buffer, int length);
 
     void readMsg();
+
+    void printBuffer(std::vector<unsigned char> Buffer);
+
+    bool getMsg(std::vector<unsigned char> &ReadBuffer);
+
+private:
+    std::vector<unsigned char> ReadBuffer;
+    std::vector<unsigned char> MsgBuffer;
+
 
 };
 

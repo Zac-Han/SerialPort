@@ -6,18 +6,17 @@ int main()
 {
     //Communication
     MySerialPort sp;
-    sp.initPort("/dev/ttyUSB1",
+    sp.initPort("/dev/ttyUSB0",
                 SerialStreamBuf::BAUD_115200,
                 SerialStreamBuf::CHAR_SIZE_8,
                 SerialStreamBuf::PARITY_NONE,
                 SerialStreamBuf::FLOW_CONTROL_NONE,
                 1);
     if (sp.IsOpen())
-        std::cout << "/dev/ttyUSB1 is opened" << std::endl;
+        std::cout << "/dev/ttyUSB0 is opened" << std::endl;
     else
-        std::cout << "/dev/ttyUSB1 is NOT opened" << std::endl;
+        std::cout << "/dev/ttyUSB0 is NOT opened" << std::endl;
 
-    unsigned char nextByte;
     sp.readMsg();
 
 //    // Writing data to the port
