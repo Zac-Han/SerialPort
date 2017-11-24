@@ -49,7 +49,7 @@ const unsigned char START_BYTE_2 = 0xAF;
 using namespace LibSerial;
 
 struct MsgFromSp{
-unsigned char nachricht[MAX_MSG_LENGTH];
+unsigned char Msg[MAX_MSG_LENGTH];
 };
 
 /**
@@ -82,15 +82,17 @@ public:
 
     void sendMsg(unsigned char* buffer, int length);
 
-    void readMsg();
-
     void printBuffer(std::vector<unsigned char> Buffer);
 
-    bool getMsg(std::vector<unsigned char> &ReadBuffer);
+    void printBuffer(std::vector<struct MsgFromSp> Buffer);
+
+    bool MsgTask();
+
+    struct MsgFromSp getMsg();
 
 private:
     std::vector<unsigned char> ReadBuffer;
-    std::vector<unsigned char> MsgBuffer;
+    std::vector<struct MsgFromSp> MsgBuffer;
 
 
 };

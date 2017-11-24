@@ -16,8 +16,17 @@ int main()
         std::cout << "/dev/ttyUSB0 is opened" << std::endl;
     else
         std::cout << "/dev/ttyUSB0 is NOT opened" << std::endl;
+    struct MsgFromSp msg;
+    while (1) {
+        sp.readByte();
+        if (sp.MsgTask()) {
+            msg = sp.getMsg();
+            std::cout << "valid message buffer: "
+                      << msg.Msg
+                      << std::endl;
+        }
 
-    sp.readMsg();
+    }
 
 //    // Writing data to the port
 
@@ -38,11 +47,6 @@ int main()
 //    }
 //    sp.sendMsg(WriteBuffer, sizeof(WriteBuffer));
 
-    // Reading data from the port
-//    MySerialPort sp;
-//    sp.Open("/dev/ttyUSB1");
-//    sp.initDefault();
-//    sp.readMsg();
     sp.Close();
 
     return 0;

@@ -64,51 +64,46 @@ void MySerialPort::sendMsg(unsigned char *buffer, int length)
     }
 }
 
-void MySerialPort::readMsg()
-{
-    std::cout << "Receiving bytes from /dev/ttyUSB1: " << std::endl;
-    printBuffer(ReadBuffer);
-    while(1)
-    {
-        MySerialPort::readByte();
-        MySerialPort::getMsg(ReadBuffer);
-    }
-}
-
-bool MySerialPort::getMsg(std::vector<unsigned char> &ReadBuffer)
+bool MySerialPort::MsgTask()
 {
     if (ReadBuffer.empty()) {
-        std::cout << "No bytes read from the serial port!" << std::endl;
+        std::cout << "No bytes has been read from the serial port!" << std::endl;
         return false;
     }
 
     if (ReadBuffer.back() == START_BYTE_1) {
-        std::cout << "Found first start byte" << std::endl;
         MySerialPort::readByte();
         if (ReadBuffer.back() == START_BYTE_2) {
-            std::cout << "Found second start byte" << std::endl;
             std::cout << "Read buffer after finding start bytes: "
                       << std::endl;
             printBuffer(ReadBuffer);
+
             MySerialPort::readByte();
             int length = ReadBuffer.back();
-            for (int i=0; i!=(length+1); i++)
-            {
+            for (int i = 0; i != length+1; ++i) {
                 MySerialPort::readByte();
             }
+
             std::cout << "Read buffer after reading length of the message (plus 1 CRC byte): "
                       << std::endl;
             printBuffer(ReadBuffer);
-            MsgBuffer.insert(MsgBuffer.end(), ReadBuffer.end()-length-4, ReadBuffer.end());
+            //MsgBuffer.insert(MsgBuffer.end(), ReadBuffer.end()-length-4, ReadBuffer.end());
+            MsgFromSp msg;
+            std::copy(ReadBuffer.end()-length-4,
+                      ReadBuffer.end(),
+                      msg.Msg);
+            MsgBuffer.push_back(msg);
 
-            std::cout << "valid message buffer: "
-                      << std::endl;
-            printBuffer(MsgBuffer);
             ReadBuffer.clear();
         }
     }
 }
 
+struct MsgFromSp MySerialPort::getMsg()
+{
+    printBuffer(MsgBuffer);
+    return MsgBuffer.front();
+}
 
 void MySerialPort::printBuffer(std::vector<unsigned char> Buffer){
     for(std::vector<unsigned char>::iterator iter = Buffer.begin(); iter != Buffer.end(); iter++)
@@ -116,4 +111,19 @@ void MySerialPort::printBuffer(std::vector<unsigned char> Buffer){
         std::cout << *iter;
     }
     std::cout << std::endl;
+}
+
+void MySerialPort::printBuffer(std::vector<MsgFromSp> Buffer)
+{
+    int index = 1;
+    std::cout << "MsgBuffer includes following messages: " << std::endl;
+    for(std::vector<struct MsgFromSp>::iterator iter = Buffer.begin();
+        iter != Buffer.end();
+        iter++)
+    {
+        std::cout << index++
+                  << " "
+                  << (*iter).ValidMsg
+                  << std::endl;
+    }
 }
